@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BLACKFOX07GAMES</title>
     <style>
-        /* 全体の背景デザイン */
+        /* 全体のベースデザイン[cite: 1, 2] */
         body {
             background-color: #0a0a0c;
             color: #ffffff;
@@ -16,16 +16,16 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* ヘッダー部分 */
         header {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
         }
 
         h1 {
-            font-size: 3.5rem;
+            font-size: clamp(2.2rem, 10vw, 3.5rem);
             margin: 0;
             letter-spacing: 4px;
             background: linear-gradient(to right, #fff, #00ffcc);
@@ -35,77 +35,128 @@
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #aaa;
-            margin-top: 15px;
-            letter-spacing: 8px;
+            margin-top: 10px;
+            letter-spacing: 4px;
             text-transform: uppercase;
         }
 
-        /* ゲーム一覧のコンテナ */
+        /* ゲームコンテナ：スマホでは1列、PCでは複数列[cite: 2] */
         .game-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
             padding: 20px;
-            max-width: 1100px;
+            width: 100%;
+            max-width: 1200px;
+            box-sizing: border-box;
         }
 
-        /* ゲームカードの共通デザイン */
+        /* ゲームカードの構造[cite: 1, 2] */
         .game-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            width: 320px;
-            padding: 40px 20px;
-            text-align: center;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(5px);
+            height: 300px;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            box-sizing: border-box;
         }
 
-        /* ホバー時の挙動 */
-        .game-card:hover {
-            transform: translateY(-15px);
-            background: rgba(255, 255, 255, 0.08);
+        /* 背景画像レイヤー[cite: 2] */
+        .card-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.5s ease, opacity 0.3s ease;
+        }
+
+        .game-card:hover .card-bg {
+            transform: scale(1.1);
+            opacity: 0.7;
         }
 
         .game-title {
-            font-size: 1.8rem;
-            margin-bottom: 30px;
-            font-weight: 800;
+            position: relative;
+            z-index: 2;
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,1);
             font-style: italic;
         }
 
-        /* 再生ボタンのデザイン */
+        /* 再生ボタン[cite: 1] */
         .play-button {
-            display: inline-block;
+            position: relative;
+            z-index: 2;
             text-decoration: none;
-            padding: 15px 40px;
+            padding: 12px 0;
+            text-align: center;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             transition: all 0.3s ease;
             border: 2px solid;
+            background: rgba(0, 0, 0, 0.6);
         }
 
-        /* SLOT777 個別の色設定（情熱の赤系） */
-        .card-slot777:hover { border-color: #ff3366; box-shadow: 0 0 30px rgba(255, 51, 102, 0.3); }
+        /* --- 各ゲーム個別のビジュアル設定 --- */
+
+        /* 1. SLOT777 (情熱の赤)[cite: 1] */
+        .bg-slot777 { background-image: url('https://images.unsplash.com/photo-1518893063132-36e46dbe2428?q=80&w=600'); }
+        .card-slot777:hover { border-color: #ff3366; }
         .btn-slot777 { color: #ff3366; border-color: #ff3366; }
         .btn-slot777:hover { background: #ff3366; color: #fff; box-shadow: 0 0 20px #ff3366; }
 
-        /* NEON SLOT2000 個別の色設定（サイバーな青・緑系） */
-        .card-neon:hover { border-color: #00d4ff; box-shadow: 0 0 30px rgba(0, 212, 255, 0.3); }
+        /* 2. NEON SLOT2000 (カジノスロット・青ネオン)[cite: 1, 2] */
+        .bg-neon { background-image: url('https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=600'); }
+        .card-neon:hover { border-color: #00d4ff; }
         .btn-neon { color: #00d4ff; border-color: #00d4ff; }
         .btn-neon:hover { background: #00d4ff; color: #fff; box-shadow: 0 0 20px #00d4ff; }
 
+        /* 3. Block Balance (テトリス系ブロック)[cite: 2] */
+        .bg-block { background-image: url('https://images.unsplash.com/photo-1585338107529-13afc5f02586?q=80&w=600'); }
+        .card-block:hover { border-color: #00ff88; }
+        .btn-block { color: #00ff88; border-color: #00ff88; }
+        .btn-block:hover { background: #00ff88; color: #000; box-shadow: 0 0 20px #00ff88; }
+
+        /* 4. 2DRUN (モノクロ・ドット・ランゲーム)[cite: 2] */
+        .bg-run { 
+            background-image: url('https://images.unsplash.com/photo-1550747528-cdb8735d810b?q=80&w=600');
+            filter: grayscale(100%) contrast(150%);
+            image-rendering: pixelated; /* ドット感を強調 */
+        }
+        .card-run:hover { border-color: #ffffff; }
+        .btn-run { color: #ffffff; border-color: #ffffff; }
+        .btn-run:hover { background: #ffffff; color: #000; box-shadow: 0 0 20px #ffffff; }
+
         footer {
             margin-top: auto;
-            padding: 50px;
+            padding: 40px;
             color: #444;
             font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* スマホ向け最終調整[cite: 2] */
+        @media (max-width: 600px) {
+            .game-container {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+            .game-card {
+                height: 260px;
+            }
         }
     </style>
 </head>
@@ -113,21 +164,37 @@
 
     <header>
         <h1>BLACKFOX07GAMES</h1>
-        <div class="subtitle">ブラウザゲーム</div>
+        <div class="subtitle">BROWSER GAMES</div>
     </header>
 
     <main class="game-container">
         
-        <!-- SLOT777 の枠 -->
+        <!-- SLOT777 -->
         <div class="game-card card-slot777">
+            <div class="card-bg bg-slot777"></div>
             <div class="game-title">SLOT777</div>
             <a href="https://blackfox07-jp.github.io/slot777/" class="play-button btn-slot777" target="_blank">▶ 再生</a>
         </div>
 
-        <!-- NEON SLOT2000 の枠 -->
+        <!-- NEON SLOT2000 -->
         <div class="game-card card-neon">
+            <div class="card-bg bg-neon"></div>
             <div class="game-title">NEON SLOT2000</div>
             <a href="https://blackfox07-jp.github.io/neonslot2000/" class="play-button btn-neon" target="_blank">▶ 再生</a>
+        </div>
+
+        <!-- Block Balance -->
+        <div class="game-card card-block">
+            <div class="card-bg bg-block"></div>
+            <div class="game-title">Block Balance</div>
+            <a href="https://blackfox07-jp.github.io/block-Balance/" class="play-button btn-block" target="_blank">▶ 再生</a>
+        </div>
+
+        <!-- 2DRUN -->
+        <div class="game-card card-run">
+            <div class="card-bg bg-run"></div>
+            <div class="game-title">2DRUN</div>
+            <a href="https://blackfox07-jp.github.io/2DRUN/" class="play-button btn-run" target="_blank">▶ 再生</a>
         </div>
 
     </main>
